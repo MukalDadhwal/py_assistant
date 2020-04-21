@@ -19,7 +19,6 @@ speaker = win32com.client.Dispatch('SAPI.SpVoice')
 
 speaker.Speak('HEY MY NAME IS PY TELL ME WHAT CAN I DO FOR YOU')
 
-
 # Defining all the functions 
 
 def kelvin_to_celsius(x):
@@ -353,9 +352,9 @@ def showResult(*args):
 
     elif not entryField.get():
 
-        speaker.Speak("PLEASE ENTER SOMETHING IN THE ENTRY FIELD")
-
         emptyLable.config(text='PLEASE ENTER SOMETHING IN THE ENTRY FIELD')
+
+        speaker.Speak("PLEASE ENTER SOMETHING IN THE ENTRY FIELD")
 
     elif query == 'Date' or query == 'date' or query == 'Time' or query == 'time':
 
@@ -371,10 +370,9 @@ def showResult(*args):
         
         toSearch = entryField.get()
 
-        speaker.Speak('Showing web results for your query {}'.format(toSearch))
+        speaker.Speak(f'Showing web results for your query {toSearch}')
 
         search(toSearch)
-
 
 
 def showGuide():
