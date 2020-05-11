@@ -461,7 +461,7 @@ window.iconbitmap("app_icon.ico")
 
 topFrame = ttk.Frame(window)
 
-path = 'F:/programming/pythonPrograms/assistant_logo.png'
+path = 'assistant_logo.png'
 
 img = ImageTk.PhotoImage(Image.open(path))
 
