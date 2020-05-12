@@ -17,15 +17,15 @@ window.resizable(0,0)
 
 speaker = win32com.client.Dispatch('SAPI.SpVoice')
 
-speaker.Speak('HEY MY NAME IS PY TELL ME WHAT CAN I DO FOR YOU')
+speaker.Speak("Hey my name is py tell me what can I do for you")
 
-# Defining all the functions 
+# Defining all the functions   
 
 def kelvin_to_celsius(x):
 
     return round(x - 273, 2)
 
-def show_wheather(city):
+def showWeather(city):
         
     api_key = "59830b3bf04fb5a6d65e035f3888ab20"
   
@@ -58,15 +58,15 @@ def show_wheather(city):
             
                 weather_description = z[0]["description"]
             
-                return (" The weather in %s is \n" % city +
+                return (f" THE WEATHER IN {city.upper()} IS \n"+
 
-                        "\n TEMPERATURE (in celsius unit) = " + str(current_temp).upper()+
+                        "\n Temperature (in celsius unit) => " + str(current_temp).upper()+
             
-                        "\n ATMOSPHERIC PRESSURE (in hPa unit) = " + str(current_pressure).upper()+
+                        "\n Atmospheric pressure (in hPa unit) => " + str(current_pressure).upper()+
                                 
-                        "\n HUMIDITY (in percentage) = " + str(current_humidiy).upper()+
+                        "\n Humidity (in percentage) => " + str(current_humidiy).upper()+
                                 
-                        "\n DESCRIPTION = " + str(weather_description))
+                        "\n Description => " + str(weather_description))
                                 
             else: 
                 
@@ -88,56 +88,26 @@ def sendMail(senderEmail, recEmail, password, msg):
     finally:
         server.close()
 
-
 def search(query):
 
-    webbrowser.open_new_tab('https://google.com/search?q={}'.format(query))
+    webbrowser.open_new_tab(f'https://google.com/search?q={query}')
 
 # Main function 
 def showResult(*args):
 
     query = entryField.get().strip()
 
-    emptyLable.config(text=' ')
+    emptyLable.config(text=" ")
 
-    if query == 'weather' or query == 'Weather':
+    if 'showweatherof' in query.lower().replace(" ",""):
 
-        speaker.Speak('To see the weather of a place just enter the city name in the entry field !')
+        city = query.lower().replace(" ", "")[13:]
+        result = showWeather(city)
 
-        def showWheather(*args):
+        emptyLable.config(text=result)
+        speaker.Speak(result)
 
-            city = enterCity.get()
-            result = show_wheather(city)
-            emptyLable.config(text=result)
-
-            speaker.Speak(result)
-
-        queryWindow = Toplevel(window)
-
-        queryWindow.title('SHOWING WHEATHER')
-
-        queryWindow.geometry('380x100')
-
-        queryWindow.resizable(0,0)
-        
-        someText = ttk.Label(queryWindow, text='Enter the city name')
-
-        someText.grid(row=0, column=0, padx=10)
-
-        enterCity = ttk.Entry(queryWindow, width=30)
-
-        enterCity.bind("<Return>", showWheather)
-
-        enterCity.grid(row=0, column=1)
-
-        enterCity.focus()
-        
-        but = ttk.Button(queryWindow, text='GO', width=10, command=showWheather)
-
-        but.grid(row=1, columnspan=2, pady=20)
-
-
-    elif  query == 'calculator' or query == 'Calculator':
+    elif  query.lower().replace(" ","") == 'calculator':
 
         speaker.Speak('Opening the calculator')
         
@@ -265,7 +235,7 @@ def showResult(*args):
     ## mail sender app is curently not working 
     ## But promise to fix in future updates
 
-    elif query == 'send mail' or query == 'Send mail' or query == 'sendmail':
+    elif query.lower().replace(" ", "") == 'sendmail':
 
         speaker.Speak('Opening the Mail Sender app')
 
@@ -356,16 +326,6 @@ def showResult(*args):
 
         speaker.Speak("PLEASE ENTER SOMETHING IN THE ENTRY FIELD")
 
-    elif query == 'Date' or query == 'date' or query == 'Time' or query == 'time':
-
-        now = datetime.datetime.now()
-        dateTime = now.strftime('%Y-%m-%d %H:%M:%S')
-        
-        currDateTime = 'The current date and time is : {}'.format(dateTime)
-
-        emptyLable.config(text=currDateTime)
-        speaker.Speak(currDateTime)
-
     else:
         
         toSearch = entryField.get()
@@ -379,13 +339,13 @@ def showGuide():
 
     searchWindow = Toplevel(window)
 
-    searchWindow.geometry('300x300')
+    searchWindow.geometry('300x300+920+70')
 
     searchWindow.title('Help')
 
     searchWindow.resizable(0,0)
 
-    guideText = Label(searchWindow, text='GUIDE FOR APP', font='Courier 20')
+    guideText = Label(searchWindow, text='GUIDE FOR APP', font='Times 20')
 
     guideText.grid(row=0, columnspan=2)
 
@@ -419,21 +379,22 @@ def about():
 
     aboutWindow = Toplevel(window)
 
-    aboutWindow.geometry('300x200')
+    aboutWindow.geometry('340x200+920+70')
 
     aboutWindow.title('About')
 
     aboutWindow.resizable(0,0)
 
-    text = '''
+    text = """
+    Hey, I am a 15 year old app developer.
 
-    Hey, I am a 15 year old app developer.\nReach out to me at:
+    Reach out to me at:
 
->blabla@gmail.com
-    >blabla2facebook.com
-            >github.com/MukalDadhwal
+    github id => github.com/MukalDadhwal
+    facebook id => blabla2facebook.com
+    gmail id => mukaldadhwal67@gmail.com
 
-           '''
+    """
 
     someText= Label(aboutWindow, text=text, font='10')
 
