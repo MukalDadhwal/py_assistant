@@ -3,11 +3,13 @@ from ttkthemes import ThemedTk
 from tkinter import *
 from tkinter import messagebox
 from PIL import ImageTk, Image
-import requests, json, webbrowser   
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import requests, json, webbrowser
 import win32com.client, datetime
-import smtplib
+import smtplib, email
 
-window  = ThemedTk(theme='breeze')          
+window  = ThemedTk(theme='breeze')
 
 window.geometry('600x550+300+70')
 
@@ -19,80 +21,88 @@ speaker = win32com.client.Dispatch('SAPI.SpVoice')
 
 speaker.Speak("Hey my name is py tell me what can I do for you")
 
-# Defining all the functions   
+# Defining all the functions
+
+def sendMail(senderEmail, recEmail, password, subject, msg):
+
+    try:
+        message = MIMEMultipart()
+        message['From'] = senderEmail
+        message['To'] = recEmail
+        message['Subject'] = subject
+
+        message.attach(MIMEText(msg, 'plain'))
+        text = message.as_string()
+
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(senderEmail, password)
+        server.sendmail(senderEmail, recEmail, text)
+
+    finally:
+        server.close()
 
 def kelvin_to_celsius(x):
 
     return round(x - 273, 2)
 
 def showWeather(city):
-        
+
     api_key = "59830b3bf04fb5a6d65e035f3888ab20"
-  
+
     base_url = "http://api.openweathermap.org/data/2.5/weather?"
-      
+
     complete_url = base_url + "appid=" + api_key + "&q=" + city
 
-    try: 
-        response = requests.get(complete_url) 
+    try:
+        response = requests.get(complete_url)
     except:
         return 'No internet connection'
-       
-    x = response.json() 
+
+    x = response.json()
 
     try:
         if x["cod"] != "400":
 
-            if x["cod"] != "404": 
-            
+            if x["cod"] != "404":
+
                 y = x["main"]
-                
+
                 current_temperature = y["temp"]
                 current_temp = kelvin_to_celsius(current_temperature)
-            
-                current_pressure = y["pressure"] 
-        
+
+                current_pressure = y["pressure"]
+
                 current_humidiy = y["humidity"]
 
-                z = x["weather"] 
-            
+                z = x["weather"]
+
                 weather_description = z[0]["description"]
-            
+
                 return (f" THE WEATHER IN {city.upper()} IS \n"+
 
                         "\n Temperature (in celsius unit) => " + str(current_temp).upper()+
-            
+
                         "\n Atmospheric pressure (in hPa unit) => " + str(current_pressure).upper()+
-                                
+
                         "\n Humidity (in percentage) => " + str(current_humidiy).upper()+
-                                
+
                         "\n Description => " + str(weather_description))
-                                
-            else: 
-                
+
+            else:
+
                 return " City Not Found"
         else:
             return " Please Enter a City name"
     except:
         return "No internet connection"
-        
 
-def sendMail(senderEmail, recEmail, password, msg):
-
-    try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(senderEmail, password)
-        server.sendmail(senderEmail, recEmail, msg)
-
-    finally:
-        server.close()
 
 def search(query):
 
     webbrowser.open_new_tab(f'https://google.com/search?q={query}')
 
-# Main function 
+# Main function
 def showResult(*args):
 
     query = entryField.get().strip()
@@ -110,7 +120,7 @@ def showResult(*args):
     elif  query.lower().replace(" ","") == 'calculator':
 
         speaker.Speak('Opening the calculator')
-        
+
         calculatorApp = Toplevel(window)
 
         calculatorApp.title('CALCULATOR')
@@ -126,7 +136,7 @@ def showResult(*args):
 
         def clear():
 
-            var = '' 
+            var = ''
             equation.set(var)
 
         def evalute():
@@ -232,9 +242,6 @@ def showResult(*args):
 
         DownFrame.grid()
 
-    ## mail sender app is curently not working 
-    ## But promise to fix in future updates
-
     elif query.lower().replace(" ", "") == 'sendmail':
 
         speaker.Speak('Opening the Mail Sender app')
@@ -248,24 +255,25 @@ def showResult(*args):
         mailSenderApp.title('Mail Sender App')
 
         def sm():
-            
+
             try:
-                
-                print(sendMail(str(Ent2), str(Ent4), str(Ent3), str(textBox.get('1.0', END))))
+                sendMail(str(Ent2.get()), str(Ent4.get()), str(Ent3.get()), str(Ent5.get()), str(textBox.get('1.0', END)))
 
                 blankText.configure(text='Mail sended')
-                
+                speaker.Speak('Mail sended')
+
             except:
 
-                blankText.configure(text='Something went wrong')
+                blankText.configure(text='Something went wrong !')
+                speaker.Speak('Something went wrong!')
 
-        
+
         loginText = Label(mailSenderApp, text='LOGIN DETAILS', bg='Red', fg='Yellow')
 
         loginText.grid(row=0, column=0)
 
         senderId = Label(mailSenderApp, text='Enter your email id here', height=5)
- 
+
         senderId.grid(row=1, column=0)
 
         Ent2 = Entry(mailSenderApp, width=40)
@@ -289,13 +297,13 @@ def showResult(*args):
         receiverId = Label(mailSenderApp, text='Type the receiver\'s email id', height=5)
 
         receiverId.grid(row=4, column=0)
- 
+
         Ent4 = Entry(mailSenderApp, width=40)
 
         Ent4.grid(row=4, column=1)
 
         Subject = Label(mailSenderApp, text='Type the subject of your email id here', height=2)
-   
+
         Subject.grid(row=5, column=0)
 
         Ent5 = Entry(mailSenderApp, width=40)
@@ -303,13 +311,13 @@ def showResult(*args):
         Ent5.grid(row=5, column=1)
 
         contentText = Label(mailSenderApp, text='Write the content here :', height=20)
-      
+
         contentText.grid(row=6, column=0)
 
         textBox = Text(mailSenderApp, width=40, height=10, wrap=WORD, pady=20)
 
         textBox.grid(row=6, column=1)
-                
+
         Bt_send = Button(mailSenderApp, text='Send Mail',command=sm, bg='Yellow', fg='Blue')
 
         Bt_send.grid(row=7, columnspan=2)
@@ -317,7 +325,7 @@ def showResult(*args):
         blankText = Label(mailSenderApp, text='')
 
         blankText.grid(row=7, column=1)
-        
+
         mailSenderApp.mainloop()
 
     elif not entryField.get():
@@ -327,7 +335,7 @@ def showResult(*args):
         speaker.Speak("PLEASE ENTER SOMETHING IN THE ENTRY FIELD")
 
     else:
-        
+
         toSearch = entryField.get()
 
         speaker.Speak(f'Showing web results for your query {toSearch}')
@@ -406,11 +414,11 @@ def exit():
 
 menuBar = Menu(window)
 
-help = Menu(menuBar, tearoff=0)  
+help = Menu(menuBar, tearoff=0)
 
 help.add_command(label='How To Search', command=showGuide)
 
-menuBar.add_cascade(label='Help', menu=help)  
+menuBar.add_cascade(label='Help', menu=help)
 
 menuBar.add_cascade(label='About', command=about)
 
