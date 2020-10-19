@@ -1,6 +1,6 @@
+from tkinter import *
 from tkinter import ttk
 from ttkthemes import ThemedTk
-from tkinter import *
 from tkinter import messagebox
 from PIL import ImageTk, Image
 from email.mime.text import MIMEText
@@ -8,6 +8,7 @@ from email.mime.multipart import MIMEMultipart
 import requests, json, webbrowser
 import win32com.client, datetime
 import smtplib, email
+from math import *
 
 window  = ThemedTk(theme='breeze')
 
@@ -35,7 +36,9 @@ def sendMail(senderEmail, recEmail, password, subject, msg):
         text = message.as_string()
 
         server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.ehlo()
         server.starttls()
+        server.ehlo()
         server.login(senderEmail, password)
         server.sendmail(senderEmail, recEmail, text)
 
@@ -61,6 +64,9 @@ def showWeather(city):
 
     x = response.json()
 
+    # code 200 -> site can be accessed
+    # code 404 -> site is not available
+
     try:
         if x["cod"] != "400":
 
@@ -69,11 +75,9 @@ def showWeather(city):
                 y = x["main"]
 
                 current_temperature = y["temp"]
-                current_temp = kelvin_to_celsius(current_temperature)
-
                 current_pressure = y["pressure"]
-
                 current_humidiy = y["humidity"]
+                current_temp = kelvin_to_celsius(current_temperature)
 
                 z = x["weather"]
 
@@ -90,7 +94,6 @@ def showWeather(city):
                         "\n Description => " + str(weather_description))
 
             else:
-
                 return " City Not Found"
         else:
             return " Please Enter a City name"
@@ -102,7 +105,7 @@ def search(query):
 
     webbrowser.open_new_tab(f'https://google.com/search?q={query}')
 
-# Main function
+# Main function -> responsible for showing all results
 def showResult(*args):
 
     query = entryField.get().strip()
@@ -117,7 +120,7 @@ def showResult(*args):
         emptyLable.config(text=result)
         speaker.Speak(result)
 
-    elif  query.lower().replace(" ","") == 'calculator':
+    elif  query.lower().replace(" ","") == 'calculator' or query.lower().replace(" ","") == 'opencalculator':
 
         speaker.Speak('Opening the calculator')
 
@@ -125,29 +128,58 @@ def showResult(*args):
 
         calculatorApp.title('CALCULATOR')
 
-        calculatorApp.geometry('480x370')
+        calculatorApp.geometry('480x420')
 
         calculatorApp.resizable(0,0)
 
         def press(Bt_num):
 
             exp = Ent.get()
-            equation.set(str(exp)+str(Bt_num))
+
+            if exp == 'Error':
+                equation.set(str(Bt_num))
+            else:
+                equation.set(str(exp)+str(Bt_num))
 
         def clear():
-
             var = ''
             equation.set(var)
 
-        def evalute():
+        def sine(angle: int) -> str:
+            radian = radians(angle)
+            return str(round(sin(radian), 5))
 
+        def cosine(angle: int) -> str:
+            r = radians(angle)
+            return str(round(cos(r), 5))
+
+        def tangent(angle: int) -> str:
+            r = radians(angle)
+            return str(round(tan(r), 5))
+
+        def evalute():
             expression = Ent.get()
 
             try:
-                val = round(eval(str(expression)), 5)
-                equation.set(val)
+                exp = expression.replace(" ", "")
 
-            except:
+                if 'sin' in expression:
+                    value = sine(int(exp[3:]))
+                    equation.set(value)
+                elif 'cos' in expression:
+                    value = cosine(int(exp[3:]))
+                    equation.set(value)
+                elif 'tan' in expression:
+                    value = tangent(int(exp[3:]))
+                    equation.set(value)
+                elif 'sqrt' in expression:
+                    value = exp[4:]
+                    equation.set(sqrt(int(value)))
+                else:
+                    val = round(eval(str(expression)), 5)
+                    equation.set(val)
+
+            except:      # Checking for 0 division or some other error
                 equation.set('Error')
         def delete():
 
@@ -160,11 +192,9 @@ def showResult(*args):
 
         equation = StringVar()
 
-        Ent = ttk.Entry(TopFrame, textvariable=equation, width=55, state=DISABLED)
+        Ent = ttk.Entry(TopFrame, textvariable=equation, width=55)
 
         Ent.grid(row=0, column=0, pady=10, padx=45)
-
-        Ent.focus()
 
         TopFrame.grid()
 
@@ -236,13 +266,29 @@ def showResult(*args):
 
         Bt_divide.grid(row=4, column=3)
 
+        Bt_sin = Button(DownFrame, text='sin', width=12, height=3, font='Courier 10 bold', command=lambda: press('sin'))
+
+        Bt_sin.grid(row=5, column=0)
+
+        Bt_cos = Button(DownFrame, text='cos', width=12, height=3, font='Courier 10 bold', command=lambda: press('cos'))
+
+        Bt_cos.grid(row=5, column=1)
+
+        Bt_tan = Button(DownFrame, text='tan', width=12, height=3, font='Courier 10 bold', command=lambda: press('tan'))
+
+        Bt_tan.grid(row=5, column=2)
+
+        Bt_sqrt = Button(DownFrame, text='sqrt', width=12, height=3, font='Courier 10 bold', command=lambda: press('sqrt'))
+
+        Bt_sqrt.grid(row=5, column=3)
+
         Bt_clear = Button(DownFrame, text='CLEAR', width=52, height=3, font='Courier 10 bold', command=clear)
 
-        Bt_clear.grid(row=5, columnspan=4)
+        Bt_clear.grid(row=6, columnspan=4)
 
         DownFrame.grid()
 
-    elif query.lower().replace(" ", "") == 'sendmail':
+    elif query.lower().replace(" ", "") == 'sendmail' or query.lower().replace(" ", "") == 'mail' or query.lower().replace(" ", "") == 'mailsend':
 
         speaker.Speak('Opening the Mail Sender app')
 
@@ -338,7 +384,7 @@ def showResult(*args):
 
         toSearch = entryField.get()
 
-        speaker.Speak(f'Showing web results for your query {toSearch}')
+        speaker.Speak(f"Showing web results for your query {toSearch}")
 
         search(toSearch)
 
@@ -360,22 +406,22 @@ def showGuide():
     list = Listbox(searchWindow, width=42, height=15)
 
     list.insert(1, 'To find the weather of a place')
-    list.insert(2, 'Enter: weather')
+    list.insert(2, 'Write: show weather of <city name>')
 
     list.insert(3, '')
 
     list.insert(4, 'To open calculator')
-    list.insert(5, 'Enter: calculator')
+    list.insert(5, 'Write: calculator or open calculator')
 
     list.insert(6, '')
 
     list.insert(7, 'To open Mail Sender App')
-    list.insert(8, 'Enter: send mail')
+    list.insert(8, 'Write: send mail or mail')
 
     list.insert(9, '')
 
     list.insert(10, 'To search Web')
-    list.insert(11, 'Enter: <your query>')
+    list.insert(11, 'Write: <Query>')
 
     list.insert(12, '')
 
@@ -393,16 +439,11 @@ def about():
 
     aboutWindow.resizable(0,0)
 
-    text = """
-    Hey, I am a 15 year old app developer.
-
+    text = """Hey, I am a 16 year old app developer.
     Reach out to me at:
-
     github id => github.com/MukalDadhwal
     facebook id => blabla2facebook.com
-    gmail id => mukaldadhwal67@gmail.com
-
-    """
+    gmail id => test@gmail.com"""
 
     someText= Label(aboutWindow, text=text, font='10')
 
@@ -426,13 +467,15 @@ menuBar.add_cascade(label='Exit', command=exit)
 
 window.config(menu=menuBar)
 
-window.iconbitmap("app_icon.ico")
+icon_path = "drivename:\\xxxxxx\\xxxxxxx\\app_icon.ico"
+
+window.iconbitmap(icon_path)
 
 topFrame = ttk.Frame(window)
 
-path = 'assistant_logo.png'
+image_path = "drivename:\\xxxxxxx\\xxxxxx\\assistant_logo.png"
 
-img = ImageTk.PhotoImage(Image.open(path))
+img = ImageTk.PhotoImage(Image.open(image_path))
 
 image = ttk.Label(topFrame, image=img)
 
