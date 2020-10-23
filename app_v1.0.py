@@ -7,7 +7,8 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import requests, json, webbrowser
 import win32com.client, datetime
-import smtplib, email
+import smtplib, email, pygame, random
+from newsapi import NewsApiClient
 from math import *
 
 window  = ThemedTk(theme='breeze')
@@ -22,7 +23,138 @@ speaker = win32com.client.Dispatch('SAPI.SpVoice')
 
 speaker.Speak("Hey my name is py tell me what can I do for you")
 
+speak = IntVar()
+speak.set(True)
+
 # Defining all the functions
+
+def speakResult():
+    if speak.get() == 1:
+        return True
+    return False
+
+
+def game():
+
+    pygame.init()
+
+    width = 600
+    height = 600
+
+    screen = pygame.display.set_mode((height,width))
+
+    pygame.display.set_caption('Snake')
+
+    red = (255,0,0)
+    white = (255,255,255)
+    green = (0,155,0)
+
+    clock = pygame.time.Clock()
+
+    font = pygame.font.SysFont(None , 25 )
+
+    def snake(block_size, snakeList):
+        for XnY in snakeList:
+            pygame.draw.rect(screen, green, (XnY[0], XnY[1], block_size, block_size))
+
+
+    def message(msg,color):
+        screen_text = font.render(msg, True, color)
+        screen.blit(screen_text, (200,200))
+
+    def gameloop():
+        x_change = width/2
+        y_change = height/2
+
+        block_size = 10
+        AppleSize = 10
+
+        lead_x_change = 0
+        lead_y_change = 0
+
+        snakeList = []
+        snakeLength = 1
+
+        GameExit = False
+        GameOver = False
+
+        randAppleX = random.randrange(0, width - 30, 10)
+        randAppleY = random.randrange(0, height - 30, 10)
+
+        while not GameExit:
+
+            while GameOver == True:
+                screen.fill(white)
+                message('GAME OVER , Press P to play again or Q to quit',red)
+                pygame.display.update()
+
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_q:
+                            GameExit = True
+                            GameOver = False
+                        if event.key == pygame.K_p:
+                            gameloop()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    GameExit = True
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        lead_x_change = -10
+                        lead_y_change = 0
+                    elif event.key == pygame.K_RIGHT:
+                        lead_x_change = 10
+                        lead_y_change = 0
+                    elif event.key == pygame.K_UP:
+                        lead_y_change = -10
+                        lead_x_change = 0
+                    elif event.key == pygame.K_DOWN:
+                        lead_y_change = 10
+                        lead_x_change = 0
+
+
+            if x_change >= 600 or x_change < 0 or y_change >= 600 or y_change < 0:
+                GameOver = True
+
+            x_change += lead_x_change
+            y_change += lead_y_change
+
+            screen.fill(white)
+
+
+            snakehead = []
+            snakehead.append(x_change)
+            snakehead.append(y_change)
+            snakeList.append(snakehead)
+
+            if len(snakeList) > snakeLength:
+                del snakeList[0]
+
+            for eachElement in snakeList[:-1]:
+                if eachElement == snakehead:
+                    GameOver = True
+
+            snake(block_size, snakeList)
+
+
+            pygame.draw.rect(screen, red, [randAppleX, randAppleY, AppleSize, AppleSize])
+            clock.tick(30)
+            pygame.display.update()
+
+            if x_change == randAppleX and y_change == randAppleY:
+                randAppleX = random.randrange(0, width - 30, 10)
+                randAppleY = random.randrange(0, height - 30, 10)
+                snakeLength += 1
+
+
+        pygame.display.update()
+        pygame.quit()
+        # quit()
+
+
+    gameloop()
 
 def sendMail(senderEmail, recEmail, password, subject, msg):
 
@@ -114,15 +246,71 @@ def showResult(*args):
 
     if 'showweatherof' in query.lower().replace(" ",""):
 
+        s = False
         city = query.lower().replace(" ", "")[13:]
         result = showWeather(city)
 
         emptyLable.config(text=result)
-        speaker.Speak(result)
+
+        if speakResult():
+            speaker.Speak(result)
+
+    elif  query.lower().replace(" ", "") == 'game' or query.lower().replace(" ", "") == 'snakegame':
+        if speakResult():
+            speaker.Speak('Opening the snake game')
+        game()
+
+    elif  'latestnewson' in query.lower().replace(" ", ""):
+        topic = query.lower().replace(" ", "")[12:]
+
+        if speakResult():
+            speaker.Speak(f'Showing the latest news on {topic}')
+
+        NewsWindow = Toplevel(window)
+
+        NewsWindow.title('News App')
+
+        NewsWindow.geometry('600x600')
+
+        TopFrame = Frame(NewsWindow)
+
+        def showNews():
+
+            try:
+                api = NewsApiClient(api_key="26c55621d6204b9dbaaebf85bd238831")
+
+                data = api.get_everything(q=topic, page_size=5)
+
+                articles = data["articles"]
+
+                for x, y in enumerate(articles):
+                    lb1 = Label(TopFrame, text=f"{x+1}   {y['title']}", wraplength=600, justify=LEFT)
+                    lb1.grid()
+                    lb2 = Label(TopFrame, text=f"Description =>  {y['description']}", wraplength=595, justify=LEFT)
+                    lb2.grid()
+                    link = f"Click URL => {y['url']}\n"
+                    lb3 = Label(TopFrame, text=link, wraplength=600, justify=LEFT)
+                    lb3.grid()
+
+            except:
+                speaker.Speak('No internet connection')
+
+
+        lb = Label(TopFrame, text = f'Latest News on {topic}', fg='blue', bg='yellow')
+
+        lb.grid()
+
+        TopFrame.grid()
+
+        showNews()
+
+        NewsWindow.mainloop()
+
 
     elif  query.lower().replace(" ","") == 'calculator' or query.lower().replace(" ","") == 'opencalculator':
 
-        speaker.Speak('Opening the calculator')
+        if speakResult():
+            speaker.Speak('Opening the calculator')
 
         calculatorApp = Toplevel(window)
 
@@ -289,8 +477,8 @@ def showResult(*args):
         DownFrame.grid()
 
     elif query.lower().replace(" ", "") == 'sendmail' or query.lower().replace(" ", "") == 'mail' or query.lower().replace(" ", "") == 'mailsend':
-
-        speaker.Speak('Opening the Mail Sender app')
+        if speakResult():
+            speaker.Speak('Opening the Mail Sender app')
 
         mailSenderApp = Toplevel(window)
 
@@ -383,8 +571,8 @@ def showResult(*args):
     else:
 
         toSearch = entryField.get()
-
-        speaker.Speak(f"Showing web results for your query {toSearch}")
+        if speakResult():
+            speaker.Speak(f"Showing web results for your query {toSearch}")
 
         search(toSearch)
 
@@ -459,6 +647,8 @@ help = Menu(menuBar, tearoff=0)
 
 help.add_command(label='How To Search', command=showGuide)
 
+help.add_checkbutton(label = 'Don\'t speak result', variable = speak, onvalue = 0, offvalue = 1)
+
 menuBar.add_cascade(label='Help', menu=help)
 
 menuBar.add_cascade(label='About', command=about)
@@ -467,17 +657,19 @@ menuBar.add_cascade(label='Exit', command=exit)
 
 window.config(menu=menuBar)
 
-icon_path = "drivename:\\xxxxxx\\xxxxxxx\\app_icon.ico"
+currFileLocation = __file__
+
+icon_path = currFileLocation.replace("app_v1.0.py", "app_icon.ico")
 
 window.iconbitmap(icon_path)
 
 topFrame = ttk.Frame(window)
 
-image_path = "drivename:\\xxxxxxx\\xxxxxx\\assistant_logo.png"
+image_path = currFileLocation.replace("app_v1.0.py", "assistant_logo.png")
 
 img = ImageTk.PhotoImage(Image.open(image_path))
 
-image = ttk.Label(topFrame, image=img)
+image = ttk.Label(topFrame, image = img)
 
 image.grid(row=0,column=0,pady=10)
 
