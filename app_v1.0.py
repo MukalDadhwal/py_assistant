@@ -152,9 +152,10 @@ def game():
         pygame.display.update()
         pygame.quit()
         # quit()
-
-
-    gameloop()
+    try:
+        gameloop()
+    except:
+        print('')
 
 def sendMail(senderEmail, recEmail, password, subject, msg):
 
@@ -670,9 +671,17 @@ def showGuide():
     list.insert(9, '')
 
     list.insert(10, 'To search Web')
-    list.insert(11, 'Write: <Query>')
+    list.insert(11, 'Write: <your query>')
 
     list.insert(12, '')
+
+    list.insert(13, 'To Play games')
+    list.insert(14, 'Write: game or snake game')
+
+    list.insert(15, '')
+
+    list.insert(16, 'To see the latest news')
+    list.insert(17, 'Write: latest news on <your topic>')
 
     list.grid(row=1)
 

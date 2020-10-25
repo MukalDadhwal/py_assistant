@@ -1,17 +1,22 @@
 # PY ASSISTANT
 
-### Py Assistant is a personal assistant app that can do lots of things for you. It is voice based and easy to use.
+### Py Assistant is a personal and desktop based assistant app that can do lots of things for you. It is voice based and easy to use.
 
 ## This are the things you can do with PY ASSISTANT
 
 
 - To see the weather of a place just enter show weather of followed by the city name. It can show the weather of any city on earth.
 
+- To play games, just enter game and then you can play the all favourite snake game
+
 - To open the calculator just enter calculator or open calculator. It also supports operations related to trigonometry.
 
 - To search web just enter your query in the entry field and it will search for you through the default browser in your pc.
 
 - To send mails just enter send mail in the entry field. This feature is really secure so you don't need to worry about your privacy.
+
+
+- To get the latest news on any topic just enter latest news on topic* and you will be able to see the latest updates. *your topic
 
 ## Other features
 
@@ -23,19 +28,7 @@
 
 ## **prerequisites**(Please read this)
 
-- Change the path of the file app_icon.ico in line 470 to the path where you have kept your app_icon file(by default in the same folder).
-
-
-```python
-icon_path = "drivename:\\xxxxxx\\xxxxxxx\\app_icon.ico"
-```
-
-- Change the path of the file assistant_logo.png in 474 line to the path where you have kept your assistant_logo file.
-
-
-```python
-image_path = "drivename:\\xxxxxxx\\xxxxxx\\assistant_logo.png"
-```
+- Before running the app you have to install a couple of libraries or else you will get an error. So open command prompt and install the following libraries requests, pygame, pypiwin32, json, webbrowser, smtplib, newsapi-python, email, ttkthemes.
 
 - Put both the files that is app_icon.ico and assistant_logo.png in the folder where you have the original file(py assistant app).
 
