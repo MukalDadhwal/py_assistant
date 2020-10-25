@@ -262,6 +262,7 @@ def showResult(*args):
 
     elif  'latestnewson' in query.lower().replace(" ", ""):
         topic = query.lower().replace(" ", "")[12:]
+        title = query.lower()[12:]
 
         if speakResult():
             speaker.Speak(f'Showing the latest news on {topic}')
@@ -270,9 +271,14 @@ def showResult(*args):
 
         NewsWindow.title('News App')
 
-        NewsWindow.geometry('600x600')
+        NewsWindow.geometry('600x650')
+
+        NewsWindow.resizable(0,100)
 
         TopFrame = Frame(NewsWindow)
+
+        def callback(url):
+            webbrowser.open_new_tab(url)
 
         def showNews():
 
@@ -282,23 +288,78 @@ def showResult(*args):
                 data = api.get_everything(q=topic, page_size=5)
 
                 articles = data["articles"]
+                articlesList = list(articles)
 
-                for x, y in enumerate(articles):
-                    lb1 = Label(TopFrame, text=f"{x+1}   {y['title']}", wraplength=600, justify=LEFT)
-                    lb1.grid()
-                    lb2 = Label(TopFrame, text=f"Description =>  {y['description']}", wraplength=595, justify=LEFT)
-                    lb2.grid()
-                    link = f"Click URL => {y['url']}\n"
-                    lb3 = Label(TopFrame, text=link, wraplength=600, justify=LEFT)
-                    lb3.grid()
+                lb1 = Label(TopFrame, text=f"\n1.{articlesList[0]['title']}", justify=LEFT, wraplength=595, font='bold')
+                lb1.grid(row=1, column=0)
+
+                lb2 = Label(TopFrame, text=f"Description => {articlesList[0]['description']}", justify=LEFT, wraplength=595)
+
+                lb2.grid(row=2, columnspan=2)
+
+                link1 = Label(TopFrame, text=f"Click Url => {articlesList[0]['url']}", justify=LEFT, wraplength=595)
+
+                link1.grid(row=3, columnspan=2)
+                link1.bind('<Button-1>', lambda e: callback(articlesList[0]['url']))
+
+                lb3 = Label(TopFrame, text=f"\n2.{articlesList[1]['title']}", justify=LEFT, wraplength=595, font='bold')
+                lb3.grid(row=4, column=0)
+
+                lb4 = Label(TopFrame, text=f"Description => {articlesList[1]['description']}", justify=LEFT, wraplength=595)
+
+                lb4.grid(row=5, columnspan=2)
+
+                link2 = Label(TopFrame, text=f"Click Url => {articlesList[1]['url']}", justify=LEFT, wraplength=595)
+
+                link2.grid(row=6, columnspan=2)
+                link2.bind('<Button-1>', lambda e: callback(articlesList[1]['url']))
+
+                lb5 = Label(TopFrame, text=f"\n3.{articlesList[2]['title']}", justify=LEFT, wraplength=595, font='bold')
+                lb5.grid(row=7, column=0)
+
+                lb6 = Label(TopFrame, text=f"Description => {articlesList[2]['description']}", justify=LEFT, wraplength=595)
+
+                lb6.grid(row=8, columnspan=2)
+
+                link3 = Label(TopFrame, text=f"Click Url => {articlesList[2]['url']}", justify=LEFT, wraplength=595)
+
+                link3.grid(row=9, columnspan=2)
+                link3.bind('<Button-1>', lambda e: callback(articlesList[2]['url']))
+
+                lb7 = Label(TopFrame, text=f"\n4.{articlesList[3]['title']}", justify=LEFT, wraplength=595, font='bold')
+                lb7.grid(row=10, column=0)
+
+                lb8 = Label(TopFrame, text=f"Description => {articlesList[3]['description']}", justify=LEFT, wraplength=595)
+
+                lb8.grid(row=11, columnspan=2)
+
+                link4 = Label(TopFrame, text=f"Click Url => {articlesList[3]['url']}", justify=LEFT, wraplength=595)
+
+                link4.grid(row=12, columnspan=2)
+                link4.bind('<Button-1>', lambda e: callback(articlesList[3]['url']))
+
+                lb9 = Label(TopFrame, text=f"\n5.{articlesList[4]['title']}", justify=LEFT, wraplength=595, font='bold')
+                lb9.grid(row=13, column=0)
+
+                lb10 = Label(TopFrame, text=f"Description => {articlesList[4]['description']}", justify=LEFT, wraplength=595)
+
+                lb10.grid(row=14, columnspan=2)
+
+                link5 = Label(TopFrame, text=f"Click Url => {articlesList[4]['url']}", justify=LEFT, wraplength=595)
+
+                link5.grid(row=15, columnspan=2)
+                link5.bind('<Button-1>', lambda e: callback(articlesList[4]['url']))
+
+            except IndexError:
+                speaker.Speak('Not enough information to show!')
 
             except:
-                speaker.Speak('No internet connection')
+                speaker.Speak('No internet connection!')
 
 
-        lb = Label(TopFrame, text = f'Latest News on {topic}', fg='blue', bg='yellow')
+        lb = Label(TopFrame, text = f'Latest News on {title}', font='Courier 12 bold', fg='blue', bg='yellow')
 
-        lb.grid()
+        lb.grid(row=0, columnspan=2)
 
         TopFrame.grid()
 
