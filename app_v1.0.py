@@ -108,14 +108,14 @@ def game():
                         lead_x_change = 10
                         lead_y_change = 0
                     elif event.key == pygame.K_UP:
+                        lead_x_change = 0
                         lead_y_change = -10
-                        lead_x_change = 0
                     elif event.key == pygame.K_DOWN:
-                        lead_y_change = 10
                         lead_x_change = 0
+                        lead_y_change = 10
 
 
-            if x_change >= 600 or x_change < 0 or y_change >= 600 or y_change < 0:
+            if (x_change >= 600) or (x_change < 0) or (y_change >= 600) or (y_change < 0):
                 GameOver = True
 
             x_change += lead_x_change
@@ -155,7 +155,7 @@ def game():
     try:
         gameloop()
     except:
-        print('')
+        pass
 
 def sendMail(senderEmail, recEmail, password, subject, msg):
 
@@ -701,7 +701,7 @@ def about():
     Reach out to me at:
     github id => github.com/MukalDadhwal
     facebook id => blabla2facebook.com
-    gmail id => test@gmail.com"""
+    gmail id => mukaldadhwal@gmail.com"""
 
     someText= Label(aboutWindow, text=text, font='10')
 
