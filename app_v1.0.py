@@ -1,3 +1,4 @@
+
 from tkinter import *
 from tkinter import ttk
 from ttkthemes import ThemedTk
@@ -245,7 +246,7 @@ def showResult(*args):
 
     emptyLable.config(text=" ")
 
-    if 'showweatherof' in query.lower().replace(" ",""):
+    if 'showweatherof' in query.lower().replace(" ","") or 'showweatherin' in query.lower().replace(" ", ""):
 
         s = False
         city = query.lower().replace(" ", "")[13:]
@@ -358,7 +359,7 @@ def showResult(*args):
                 speaker.Speak('No internet connection!')
 
 
-        lb = Label(TopFrame, text = f'Latest News on {title}', font='Courier 12 bold', fg='blue', bg='yellow')
+        lb = Label(TopFrame, text = f'Latest News {title}', font='Courier 12 bold', fg='blue', bg='yellow')
 
         lb.grid(row=0, columnspan=2)
 
