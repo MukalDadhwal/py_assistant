@@ -61,7 +61,7 @@ If you are facing error installing pyaudio (which I also had) see this video : h
 
 ## Screenshot
 
-![alt text](https://github.com/MukalDadhwal/py_assistant/blob/master/py_image.png?raw=true)
+![PY Assistant Image](https://github.com/MukalDadhwal/py_assistant/blob/master/app_image.png?raw=true "main screen image")
 
 ## At Last
 
