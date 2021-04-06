@@ -1,4 +1,3 @@
-
 from tkinter import *
 from tkinter import ttk
 from ttkthemes import ThemedTk
@@ -10,6 +9,7 @@ import requests, json, webbrowser
 import win32com.client, datetime
 import smtplib, email, pygame, random
 from newsapi import NewsApiClient
+import speech_recognition as sr
 from math import *
 
 window  = ThemedTk(theme='breeze')
@@ -239,6 +239,23 @@ def search(query):
 
     webbrowser.open_new_tab(f'https://google.com/search?q={query}')
 
+def listen():
+
+    try:
+        r = sr.Recognizer()
+
+        with sr.Microphone() as source:
+            r.adjust_for_ambient_noise(source, duration=0.5)
+            speaker.Speak('Listening')
+            audio = r.listen(source)
+            text = r.recognize_google(audio)
+
+        entryField.delete(0, END)
+        entryField.insert(0, text)
+        showResult()
+    except:
+        speaker.Speak('Sorry I did not get that one!')
+
 # Main function -> responsible for showing all results
 def showResult(*args):
 
@@ -353,7 +370,9 @@ def showResult(*args):
                 link5.bind('<Button-1>', lambda e: callback(articlesList[4]['url']))
 
             except IndexError:
-                speaker.Speak('Not enough information to show!')
+                speaker.Speak('Not enough information to show, showing web results')
+
+                search(title)
 
             except:
                 speaker.Speak('No internet connection!')
@@ -539,7 +558,7 @@ def showResult(*args):
 
         DownFrame.grid()
 
-    elif query.lower().replace(" ", "") == 'sendmail' or query.lower().replace(" ", "") == 'mail' or query.lower().replace(" ", "") == 'mailsend':
+    elif query.lower().replace(" ", "") == 'sendmail' or query.lower().replace(" ", "") == 'mail' or query.lower().replace(" ", "") == 'mailsend' or query.lower().replace(" ", "") == 'mail':
         if speakResult():
             speaker.Speak('Opening the Mail Sender app')
 
@@ -625,6 +644,11 @@ def showResult(*args):
 
         mailSenderApp.mainloop()
 
+    elif  query.lower().replace(" ", "") == 'exit' or query.lower().replace(" ", "") == 'shutdown':
+
+        speaker.Speak('Closing the app')
+        window.destroy()
+
     elif not entryField.get():
 
         emptyLable.config(text='PLEASE ENTER SOMETHING IN THE ENTRY FIELD')
@@ -657,7 +681,7 @@ def showGuide():
     list = Listbox(searchWindow, width=42, height=15)
 
     list.insert(1, 'To find the weather of a place')
-    list.insert(2, 'Write: show weather of <city name>')
+    list.insert(2, 'Write: show weather in <city name>')
 
     list.insert(3, '')
 
@@ -701,8 +725,7 @@ def about():
     text = """Hey, I am a 16 year old app developer.
     Reach out to me at:
     github id => github.com/MukalDadhwal
-    facebook id => blabla2facebook.com
-    gmail id => mukaldadhwal@gmail.com"""
+    school id => mukal.17705@kvsrodelhi.in"""
 
     someText= Label(aboutWindow, text=text, font='10')
 
@@ -742,7 +765,7 @@ img = ImageTk.PhotoImage(Image.open(image_path))
 
 image = ttk.Label(topFrame, image = img)
 
-image.grid(row=0,column=0,pady=10)
+image.grid(row=0,columnspan=2,pady=10)
 
 topFrame.grid()
 
@@ -750,15 +773,22 @@ downFrame = ttk.Frame(window)
 
 text = ttk.Label(downFrame, text='HEY MY NAME IS PY TELL ME WHAT CAN I DO FOR YOU', font='bold 9' )
 
-text.grid(row=0, column=0, padx=150)
+text.grid(row=0, columnspan=2, padx=150)
 
 entryField = ttk.Entry(downFrame, width=70)
 
 entryField.bind("<Return>", showResult)
 
-entryField.grid(row=2, columnspan=2, padx=20, pady=15)
+entryField.grid(row=2, column=0, sticky='E', pady=10)
 
 entryField.focus()
+
+mike_path = currFileLocation.replace("app_v1.0.py", "mike_icon.jpg")
+mike_img = ImageTk.PhotoImage(Image.open(mike_path))
+
+speechButton = ttk.Button(downFrame, text='speak', width = 5, image=mike_img, padding=0, command=listen)
+
+speechButton.grid(row=2, column=1, sticky = 'W')
 
 button = ttk.Button(downFrame, text='Go', width=10,command=showResult)
 
