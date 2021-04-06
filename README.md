@@ -3,7 +3,7 @@
 
 ### Py Assistant is a virtual, voice based and desktop application that can do multiple tasks for you. It is voice based and easy to use.
 
-## Speach recognition
+## Speech recognition
 
 The app supports speech recognition and the user can click the mike icon on left side of the entry field to speak his query. All features listed below can be used with speech recognition also :)
 
