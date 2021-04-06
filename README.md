@@ -5,7 +5,7 @@
 
 ## Speech recognition
 
-The app supports speech recognition and the user can click the mike icon on left side of the entry field to speak his query. All features listed below can be used with speech recognition also :)
+The app supports speech recognition and user can click on the mike button on right side of the entry field to speak about his query. All features listed below can be used with speech recognition also :)
 
 
 ## Features of PY Assistant
@@ -65,4 +65,4 @@ If you are facing error installing pyaudio (which I also had) see this video : h
 
 ## At Last
 
->I hope you will like my app and if you have any problem or query feel free to tell me. Your valuable feedback will be very helpful for me. Thanks You Very Much😄!!
+>I hope you will like my app and if you have any problem or query feel free to reach me with your valuable feedback. Thanks You Very Much😄!!
