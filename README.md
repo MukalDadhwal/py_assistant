@@ -4,13 +4,11 @@
 ### Py Assistant is a virtual, voice based and desktop application that can do multiple tasks for you. It is voice based and easy to use.
 
 ## Speach recognition
-***
 
 The app supports speech recognition and the user can click the mike icon on left side of the entry field to speak his query. All features listed below can be used with speech recognition also :)
 
 
 ## Features of PY Assistant
-***
 
 - **Weather** : To check the weather of a place just enter show weather in followed by the city name. It can show the weather of any city on earth.
 
@@ -26,7 +24,6 @@ The app supports speech recognition and the user can click the mike icon on left
 - **News** : To get the latest news on any topic just enter latest news on "your topic" and it will show latest news.
 
 ## Other features
-***
 
 - **Help Tab** : Contains two tabs 1. how to search 2. don't speak result
 
@@ -41,7 +38,6 @@ The app supports speech recognition and the user can click the mike icon on left
 
 
 ## Installation
-***
 ```python
 # INSTALL THE FOLLOWING LIBRARIES USING COMMAND PROMPT
 pip install requests
@@ -57,18 +53,16 @@ pip install pyaudio
 pip install SpeechRecognition
 pip install Pillow
 
-Now you are ready to run the application :)
+now you are ready to run the application :)
 
 ```
 
 If you are facing error installing pyaudio (which I also had) see this video : https://www.youtube.com/watch?v=Z1fEd-TP4zY
 
 ## Screenshot
-***
 
 ![alt text](https://github.com/MukalDadhwal/py_assistant/blob/master/py_image.png?raw=true)
 
 ## At Last
-***
 
 >I hope you will like my app and if you have any problem or query feel free to tell me. Your valuable feedback will be very helpful for me. Thanks You Very Much😄!!
